@@ -1,5 +1,6 @@
 const db = require('../config/db.js')
 const dotenv = require('dotenv')
+const ErrorResponse = require('../utils/errorResponse.js')
 dotenv.config()
 
 /**
@@ -12,11 +13,11 @@ dotenv.config()
  *         content:
  *           application/json:
  */
-exports.getAllCustomer = (req,res) => {
-    const sql = process.env.QUERRY_ALL
+exports.getAllCustomer = (req,res,next) => {
+    const sql = process.env.QUERRY_ALL + 1
     db.query(sql,(err,result)=>{
         if(err){
-            res.status(500).json({message:'Error occurred while retrieving products.',error: err})
+            next(new ErrorResponse(err.sqlState))
         }
         else{
             res.status(200).json(result)
@@ -34,12 +35,12 @@ exports.getAllCustomer = (req,res) => {
  *         content:
  *           application/json:
  */
-exports.getCustomerById = (req,res) => {
+exports.getCustomerById = (req,res,next) => {
     const id = Number(req.params.id)
     const sql = process.env.QUERRY_BYID
     db.query(sql,[id],(err,result)=>{
         if(err){
-            res.status(500).json({message:'Error occurred while retrieving products.',error: err})
+            next(new ErrorResponse(err.sqlState))
         }
         else{
             res.status(200).json(result)
@@ -57,12 +58,12 @@ exports.getCustomerById = (req,res) => {
  *         content:
  *           application/json:
  */
-exports.addCustomer = (req,res) => {
+exports.addCustomer = (req,res,next) => {
     const {name,address,phone} = req.body
     const sql = process.env.QUERRY_ADD
     db.query(sql,[name,address,phone],(err,result)=>{
         if(err){
-            res.status(500).json({message:'Error occurred while retrieving products.',error: err})
+            next(new ErrorResponse(err.sqlState))
         }
         else{
             res.status(200).json({message:'Succesful add!'})
@@ -80,12 +81,12 @@ exports.addCustomer = (req,res) => {
  *         content:
  *           application/json:
  */
-exports.deleteCustomer = (req,res) => {
+exports.deleteCustomer = (req,res,next) => {
     const id = Number(req.params.id)
     const sql = process.env.QUERRY_DELETE
     db.query(sql,[id],(err,result)=>{
         if(err){
-            res.status(500).json({message:'Error occurred while retrieving products.',error: err})
+            next(new ErrorResponse(err.sqlState))
         }
         else{
             res.status(200).json({message:'Succesful delete!'})
